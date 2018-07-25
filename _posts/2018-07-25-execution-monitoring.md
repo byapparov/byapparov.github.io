@@ -1,9 +1,9 @@
 ---
 layout: post
-title: "Execution Monitoring for R Scripts"
+title: "Monitoring and Alerting for Data Pipelines"
 date: 2018-07-25 16:16:01 -0600
 categories: [post, package]
-tags: [package, rdqa, r]
+tags: [package, rmeta, r]
 ---
 
 If you have automated your data processing scripts to run as cron job you need a monitoring and alerting system.  
