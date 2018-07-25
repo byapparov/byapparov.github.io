@@ -95,7 +95,7 @@ This code would create the following records:
 
 ## Monitoring and Alerts
 
-To set up monitoring in [Grafana](http://docs.grafana.org/guides/getting_started/) create new dashboard and add a graph that [links to your Influx database](http://docs.grafana.org/features/datasources/influxdb/). You can build a query that is getting `sum(value)` from `execution` measurement where `state="end"` and `job="my_pipeline"`
+To set up monitoring in [Grafana](http://docs.grafana.org/guides/getting_started/) create a new dashboard and add a graph that [links to your Influx database](http://docs.grafana.org/features/datasources/influxdb/). You can build a query that is getting `sum(value)` from `execution` measurement where `state="end"` and `job="my_pipeline"`
 
 Alerting system in Grafana allows you to send messages via different channels based on wide range of time based criteria.
 
