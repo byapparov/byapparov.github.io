@@ -47,16 +47,13 @@ Integration of the metadata logging into the database with `rmeta` is simple.
 
 First, call `start_job()` which logs execution of `start` type into `execution` metric. It will also save name of the job in the `rmeta` package environment. Name of the job will be used in the calls of any other function until `end_job()` is called.
 
+To implement incremental load you can read last increment (should be a strictly monotonically increasing integer field) with `read_increment()`. Once processing of the delta is complete you can log new increment with `log_load`.
+
+Here is an example of the script that uses `rmeta`:
+
 ```R
 start_job("my_pipeline")
 
-```
-
-## Monitoring and Alerts
-
-To implement incremental load you can read last increment (should be a strictly monotonically increasing integer field) with `read_increment()`. Once processing of the delta is complete you can log new increment with `log_load`.
-
-```R
 # find where we finished the last time
 target_data.increment <- read_increment("target_table")
 
@@ -75,14 +72,26 @@ log_load(
   records = target_data.records,
   increment = target_data.new_increment
 )
-```
 
-To complete the execution call `end_job()` which will write another `execution` record of type `end`.
-
-```
+# complete the execution
 end_job()
 ```
 
+This code would create the following records:
+
+**execution**
+|time           |id             | job              |state | value |
+|:-------------:|:-------------:|:-----------------|:-----|-------|
+|2015-08-18T00:06:00Z|d1b5ece8-075d-4448-a0a4-465e9e89644c|my_pipeline|start|1|
+|2015-08-18T00:06:30Z|d1b5ece8-075d-4448-a0a4-465e9e89644c|my_pipeline|end  |1|
+
+**task**
+|time                |id                                  | job       |type | datasource |records|increment|
+|:------------------:|:----------------------------------:|:----------|:----|:-----------|-------|---------|
+|2015-08-18T00:06:00Z|d1b5ece8-075d-4448-a0a4-465e9e89644c|my_pipeline|load |target_table|1000   | 10001   |
+
+
+## Monitoring and Alerts
 
 To set up monitoring in [Grafana](http://docs.grafana.org/guides/getting_started/) create new dashboard and add a graph that [links to your Influx database](http://docs.grafana.org/features/datasources/influxdb/). You can build a query that is getting `sum(value)` from `execution` measurement where `state="end"` and `job="my_pipeline"`
 
