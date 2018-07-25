@@ -14,6 +14,7 @@ You might also need some mechanism to do incremental data processing to reduce t
 
 You can write execution summary into InfluxDb for each job and build monitoring for your jobs in Grafana which has native integration with Influx.
 
+## Working with Metadata
 For our automated data pipeline jobs I wrote [rmeta](https://github.com/byapparov/rmeta) - a small wrapper package over [influxdbr](https://github.com/dleutnant/influxdbr) which allows to write two types of metrics into Influx:
 
 * executions - represents execution of a batch data pipeline job
@@ -42,11 +43,20 @@ For our automated data pipeline jobs I wrote [rmeta](https://github.com/byapparo
 | increment     | field (int)   | 100001               |
 
 
-Integration of the metadata logging into the database with `rmeta` is very simple:
+Integration of the metadata logging into the database with `rmeta` is simple.
+
+First, call `start_job()` which logs execution of `start` type into `execution` metric. It will also save name of the job in the `rmeta` package environment. Name of the job will be used in the calls of any other function until `end_job()` is called.
 
 ```R
 start_job("my_pipeline")
 
+```
+
+## Monitoring and Alerts
+
+To implement incremental load you can read last increment (should be a strictly monotonically increasing integer field) with `read_increment()`. Once processing of the delta is complete you can log new increment with `log_load`.
+
+```R
 # find where we finished the last time
 target_data.increment <- read_increment("target_table")
 
@@ -65,13 +75,14 @@ log_load(
   records = target_data.records,
   increment = target_data.new_increment
 )
+```
+
+To complete the execution call `end_job()` which will write another `execution` record of type `end`.
+
+```
 end_job()
 ```
 
-First, call `start_job()` which logs execution of `start` type into `execution` metric. It will also save name of the job in the `rmeta` package environment. Name of the job will be used in the calls of any other function until `end_job()` is called.
-
-
-To implement incremental load you can read last increment (should be a strictly monotonically increasing integer field) with `read_increment()`. Once processing of the delta is complete you can log new increment with `log_load`.
 
 To set up monitoring in [Grafana](http://docs.grafana.org/guides/getting_started/) create new dashboard and add a graph that [links to your Influx database](http://docs.grafana.org/features/datasources/influxdb/). You can build a query that is getting `sum(value)` from `execution` measurement where `state="end"` and `job="my_pipeline"`
 
