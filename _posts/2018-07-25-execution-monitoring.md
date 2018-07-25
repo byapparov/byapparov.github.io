@@ -80,12 +80,14 @@ end_job()
 This code would create the following records:
 
 **execution**
+
 |time           |id             | job              |state | value |
 |:-------------:|:-------------:|:-----------------|:-----|-------|
 |2015-08-18T00:06:00Z|d1b5ece8-075d-4448-a0a4-465e9e89644c|my_pipeline|start|1|
 |2015-08-18T00:06:30Z|d1b5ece8-075d-4448-a0a4-465e9e89644c|my_pipeline|end  |1|
 
 **task**
+
 |time                |id                                  | job       |type | datasource |records|increment|
 |:------------------:|:----------------------------------:|:----------|:----|:-----------|-------|---------|
 |2015-08-18T00:06:00Z|d1b5ece8-075d-4448-a0a4-465e9e89644c|my_pipeline|load |target_table|1000   | 10001   |
