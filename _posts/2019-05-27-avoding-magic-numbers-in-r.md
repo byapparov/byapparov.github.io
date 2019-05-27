@@ -2,7 +2,7 @@
 
 When you are working on a research you should try to avoid
 [magic numbers](https://en.wikipedia.org/wiki/Magic_number_(programming)) as one
-of [code smells] that makes the code difficult to reuse.
+of the [code smells](https://en.wikipedia.org/wiki/Code_smell) that makes the code difficult to reuse.
 
 Most common example of this is usage of the date ranges that are mentioned in
 different places of the code as filters:
