@@ -11,7 +11,7 @@ bring improvement to development process and quality of a solution through:
 
 Putting data inputs and outputs into the spreadsheets that can be accessed by the user was a non brainer first option that we tried.
 
-As user of the G Suite we trialed Google Spreadsheets and uptake from users is great. In one day we gathered meaningful feedback on the specification which allowed to build complete specification. Before it could take up to a month to get all formulas and conditions from the users in one place.
+As user of the G Suite we trialed Google Spreadsheets and uptake from users is great. In one day we gathered meaningful feedback on the story which allowed us to build a complete specification straightaway. Before it could take up to a month to get all formulas and conditions from the users in one place.
 
 The next step was to organise examples in spread sheets to make them part of the integrated documentation, we used following rules:
 
