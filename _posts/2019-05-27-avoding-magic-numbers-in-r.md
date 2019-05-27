@@ -37,9 +37,10 @@ input <- list(
   )
 )
 
-sql.template <- "SELECT * FROM sales
-        WHERE
-          date BETWEEN '%1$s' AND '%2$s'"
+sql.template <-
+  "SELECT * FROM sales
+  WHERE
+    date BETWEEN '%1$s' AND '%2$s'"
 sql <- sprintf(sql, input$date_range[1], input$date_range[2])
 dt <- dbExectute(sql)
 hist(dt$amount, breaks = bins)
@@ -73,9 +74,10 @@ ui <- fluidPage(
 server <- function(input, output) {
   output$distPlot <- renderPlot({
     # Nothing has changed in this part of the code
-    sql.template <- "SELECT * FROM sales
-            WHERE
-              date BETWEEN '%1$s' AND '%2$s'"
+    sql.template <-
+      "SELECT * FROM sales
+      WHERE
+        date BETWEEN '%1$s' AND '%2$s'"
     sql <- sprintf(sql, input$date_range[1], input$date_range[2])
     dt <- dbExectute(sql)
     hist(dt$amount, breaks = bins)
