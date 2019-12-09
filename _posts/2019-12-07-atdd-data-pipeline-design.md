@@ -1,7 +1,7 @@
 # Introduction
 
 In this post I want to explore a data engineering framework that would
-allow to achieve following goals:
+allow to achieve the following goals:
 - Acceptance Test Driven Development (ATDD)
 - Isolated code changes
 - Shared documentation
