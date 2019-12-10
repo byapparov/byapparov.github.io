@@ -25,6 +25,26 @@ There are few assumptions that proposed framework is designed for:
 Our focus will be on the design of `data transformation` in a way that enables
 teams to embrace Agile practices.
 
+# Data Landscape
+
+## Database
+
+This framework is targeting any Data Warehousing tool and is technology agnostic. It has been implemented in BigQuery at MADE.com.
+
+## Data Lake
+
+We use term `data lake` to refer to all the data that comes from applications in the raw format. Usually this will be `json` files in cloud storage or data streamed as `json` into the database.  
+
+We expect that data lake consists of tables without nested data.
+
+If you have nested data, you will need to add pre-processing stage to flatten the data. We will refer to flat data layer as data lake going forward.
+
+This separation will allow you to:
+- simplify the queries that contain business logical;
+- test your queries on the database engines that don't currently support nested data;
+- reduce the size of the queries by additional separation layer;
+- move data prep logic like duplicates removal, into pre-processing layer which will benefit all the queries in the data transformation layer.
+
 # Work granularity
 
 The most important element of the framework is based on the definition of the
@@ -39,7 +59,7 @@ deliver the most important fields incrementally.
 This will also allow developers to organise their code around tables and fields
 in a way that changes can be integrated quickly.
 
-# Capturing Requirements
+# Capturing requirements
 
 As many other product owners, we found spreadsheet to be the best way to
 capture requirements for data.
@@ -208,8 +228,7 @@ Here are the tables that will be created for the `customers` example:
 * attr_customers_last_sale_order
 * attr_customers_all_refunds
 
-These tables in the first iteration can be combined with the simple SQL query
-into the target table:
+These tables in the first iteration can be combined with the simple query into the target table:
 
 ```sql
 -- customers.sql
@@ -267,9 +286,10 @@ and with a line of code you build you target table:
 asseble_table("customers/target.yaml")
 ```
 
-Orchestration, optimisation and validation are hidden in `assemble_table` function.
-Every time this function is improved, benefits are passed to all
+Orchestration, optimisation and validation are hidden in `assemble_table` function. Every time this function is improved, benefits are passed to all
 the transformation pipelines that you maintain.
+
+Note that location and names of the staging tables for individual attributes are not important as soon as engine can map them to the corresponding source query. For example, BigQuery stores results of every query execution in a temporary table for 24 hours. Transformation engine can leverage this feature and combine target table from temporary tables with random names. 
 
 # Managing schema changes
 
@@ -311,8 +331,8 @@ field.
 Resolving all dependencies is impossible within a single release, unless you have a one code base for all projects. Instead, we will update metadata of `amount` field so it is obvious that `amount_ex_vat` should be used going forward. You can also set and communicate a target date for complete removal of `amount` field, at which point dependent projects can take responsibility for any outrage caused by removal of the field.
 
 
-# Continuous Integration
+# Continuous integration
 
 Code and test structure can be executed independently which means you can
 run all the tests in parallel on small datasets which should result in
-a very fast execution. Commonly used tools like Jenkins can help to achieve this.
+a very fast execution. Commonly used CI tools like Jenkins can help to achieve this.
