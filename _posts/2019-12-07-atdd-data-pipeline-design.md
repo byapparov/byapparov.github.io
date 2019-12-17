@@ -7,23 +7,29 @@ allow to achieve the following goals:
 - Shared documentation
 
 There are few assumptions that proposed framework is designed for:
- - data pipelines that consist of a mix of SQL and code
+ - data pipelines that consist of a mix of SQL and code;
  - there are multiple sources of data that are initially made available in a
-  single datastore (data lake).
- - we are building a target data layer which will be available to the business
+  single datastore (data lake);
+ - we are building a target data layer which will be available to the business.
 
  This can be represented by this flow diagram:
 
 ```
  application
-  -> data extraction     | service
-  -> data lake           | datastore
+  -> data ingestion      | service
+  -> data lake (nested)  | datastore
+  -> data extraction     | batch
+  -> staging (unnest)    | datastore
   -> data transformation | batch
   -> data warehouse      | datastore
 ```
 
 Our focus will be on the design of `data transformation` in a way that enables
 teams to embrace Agile practices.
+
+To make the execution of transformation layer simple, we introduce structured
+staging area that consists of relational projections of data lake.
+
 
 # Data Landscape
 
@@ -138,6 +144,8 @@ expected staging output in `attr_customers_all_refunds`:
 }
 ```
 
+Mock data should be saved as pretty JSON to make it readable and turned into line delimited JSON in code if need.
+
 Now developer can add SQL that conforms with the acceptance above, e.g.:
 
 ```sql
@@ -174,7 +182,7 @@ Let's explore an example for customers table.
 
 We will build target `customers` table from `orders` and `refunds`.
 
-```
+```java
 .
 └─customers
   │   pipeline.R
@@ -289,7 +297,7 @@ asseble_table("customers/target.yaml")
 Orchestration, optimisation and validation are hidden in `assemble_table` function. Every time this function is improved, benefits are passed to all
 the transformation pipelines that you maintain.
 
-Note that location and names of the staging tables for individual attributes are not important as soon as engine can map them to the corresponding source query. For example, BigQuery stores results of every query execution in a temporary table for 24 hours. Transformation engine can leverage this feature and combine target table from temporary tables with random names. 
+Note that location and names of the staging tables for individual attributes are not important as soon as engine can map them to the corresponding source query. For example, BigQuery stores results of every query execution in a temporary table for 24 hours. Transformation engine can leverage this feature and combine target table from temporary tables with random names.
 
 # Managing schema changes
 
